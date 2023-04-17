@@ -1,0 +1,119 @@
+#include <iostream>
+#include <string>
+
+// Define constants for game dimensions
+const int WORLD_WIDTH = 100;
+const int WORLD_HEIGHT = 50;
+
+// Define constants for block types
+const int AIR = 0;
+const int GRASS = 1;
+const int DIRT = 2;
+const int STONE = 3;
+const int WOOD = 4;
+
+// Define a class to represent a block
+class Block {
+public:
+    int type;
+    bool solid;
+    Block(int t, bool s) {
+        type = t;
+        solid = s;
+    }
+};
+
+// Define a class to represent the game world
+class World {
+public:
+    Block blocks[WORLD_HEIGHT][WORLD_WIDTH];
+    World() {
+        // Generate world with grass and dirt blocks
+        for (int i = 0; i < WORLD_HEIGHT; i++) {
+            for (int j = 0; j < WORLD_WIDTH; j++) {
+                if (i < WORLD_HEIGHT / 2) {
+                    blocks[i][j] = Block(GRASS, true);
+                }
+                else {
+                    blocks[i][j] = Block(DIRT, true);
+                }
+            }
+        }
+    }
+};
+
+// Define a class to represent the player
+class Player {
+public:
+    int x, y;
+    Player() {
+        // Initialize player position
+        x = 0;
+        y = WORLD_HEIGHT / 2;
+    }
+};
+
+// Define a function to handle player movement
+void movePlayer(Player& player, int dx, int dy, World& world) {
+    int new_x = player.x + dx;
+    int new_y = player.y + dy;
+    if (new_x >= 0 && new_x < WORLD_WIDTH && new_y >= 0 && new_y < WORLD_HEIGHT) {
+        if (!world.blocks[new_y][new_x].solid) {
+            player.x = new_x;
+            player.y = new_y;
+        }
+    }
+}
+
+// Define a function to print the game world
+void printWorld(World& world, Player& player) {
+    for (int i = 0; i < WORLD_HEIGHT; i++) {
+        for (int j = 0; j < WORLD_WIDTH; j++) {
+            if (i == player.y && j == player.x) {
+                std::cout << "P";
+            }
+            else {
+                switch (world.blocks[i][j].type) {
+                    case AIR:
+                        std::cout << " ";
+                        break;
+                    case GRASS:
+                        std::cout << "G";
+                        break;
+                    case DIRT:
+                        std::cout << "D";
+                        break;
+                    case STONE:
+                        std::cout << "S";
+                        break;
+                    case WOOD:
+                        std::cout << "W";
+                        break;
+                }
+            }
+        }
+        std::cout << std::endl;
+    }
+}
+
+// Define the main function to run the game loop
+int main() {
+    // Initialize game objects
+    World world;
+    Player player;
+
+    // Game loop
+    while (true) {
+        // Print the game world
+        printWorld(world, player);
+
+        // Get user input
+        std::string input;
+        std::cout << "Enter command (wasd to move): ";
+        std::cin >> input;
+
+        // Handle user input
+        if (input == "w") {
+            movePlayer(player, 0, -1, world);
+        }
+       
